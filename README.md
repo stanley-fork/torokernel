@@ -1,6 +1,6 @@
-# Toro![build passing](https://api.travis-ci.org/torokernel/torokernel.svg?branch=master)
+# Toro
 ## Introduction
-Toro is a unikernel dedicated to deploy applications as microVMs. Toro leverages on virtio-fs and virtio-vsocket to provide a minimalistic architecture.
+Toro is a unikernel dedicated to deploying applications as microVMs. Toro leverages virtio-fs and virtio-vsocket to provide a minimalistic architecture.
 
 ## Features
 * Support x86-64 architecture
@@ -13,8 +13,17 @@ Toro is a unikernel dedicated to deploy applications as microVMs. Toro leverages
 * Tiny image
 * Built-in gdbstub
 
-## How try Toro?
-You can try Toro by running the HelloWorld example using a Docker image that includes all the required tools. To do so, execute the following commands in a console (these steps require you to install before KVM and Docker):
+## Why Toro?
+Toro helps you write an application that will run as a VM without an OS. Toro provides an API similar to a modern OS but it is not
+POSIX. Your application won't use a syscall to communicate with Toro, instead,
+it will be a simple function call. This is because Toro and your
+application run at the same privilege level of execution. Running
+your application without an OS when deployed as a VM speeds up its
+execution. Toro is optimized for running a single application, potentially
+multithreaded.
+
+## How to try Toro?
+You can try Toro by running the HelloWorld example using a Docker image that includes all the required tools. To do so, execute the following commands in a console (these steps require you to have KVM and Docker installed first):
 
 ```bash
 wget https://raw.githubusercontent.com/torokernel/torokernel/master/ci/Dockerfile
@@ -35,8 +44,8 @@ sudo docker run --privileged --rm --mount type=bind,source="$(pwd)",target=/root
 ```
 You will find $pwd from host at `/root/torokernel` in the container.
 
-## How build Toro locally?
-Execute the commands in `ci/Dockerfile` to install the required components locally. Then, Go to `torokernel/examples` and edit `CloudIt.py` to set the correct paths to Qemu and fpc. Optionally, you can install vsock-socat from [here](https://github.com/stefano-garzarella/socat-vsock) and virtio-fs from [here](https://gitlab.com/virtio-fs/virtiofsd.git). You need to set the correct path to virtiofsd and socat.
+## How to build Toro locally?
+Execute the commands in `ci/Dockerfile` to install the required components locally. Then, go to `torokernel/examples` and edit `CloudIt.py` to set the correct paths to Qemu and fpc. Optionally, you can install vsock-socat from [here](https://github.com/stefano-garzarella/socat-vsock) and virtio-fs from [here](https://gitlab.com/virtio-fs/virtiofsd.git). You need to set the correct path to virtiofsd and socat.
 
 ## Run the HelloWorld Example
 Go to `examples/HelloWorld/` and execute:
@@ -46,7 +55,7 @@ python3 ../CloudIt.py -a HelloWorld
 ![HelloWorld](https://github.com/torokernel/torokernel/wiki/images/helloworld.gif)
 
 ## Run the StaticWebServer Example
-To run the StaticWebserver, you require virtiofsd and socat. To compile socat, execute the following commands:
+To run the StaticWebServer, you require virtiofsd and socat. To compile socat, execute the following commands:
 ```bash
 git clone git@github.com:stefano-garzarella/socat-vsock.git
 cd socat-vsock
@@ -58,16 +67,16 @@ Set the path to socat binary in CloudIt.py and then execute:
 ```bash
 python3 ../CloudIt.py -a StaticWebServer -r -d /path-to-directory/ -f 4000:80
 ```
-You have to replace the `/path-to-directory/` to a directory that containing the files, e.g., index.html. To try it, you can execute:
+You have to replace `/path-to-directory/` with a directory containing the files, e.g., index.html. To try it, you can execute:
 ```
 wget http://127.0.0.1:4000/index.html
 ```
 The `-f` parameter indicates a forwarding of the 4000 port from the host to the 80 port in the guest using vsock.
 
-![HelloWorld](https://github.com/torokernel/torokernel/wiki/images/staticwebser.gif)
+![StaticWebServer](https://github.com/torokernel/torokernel/wiki/images/staticwebser.gif)
 
 ## Run the Intercore Communication example
-This example shows how cores can communicate by using the VirtIOBus device. In this example, core #0 sends a packet to every core in the system with the **ping** string. Each core responds with a packet that contains the message **pong**. This example is configured to use three cores. To launch it, simply executes the following commands in the context of the container presented above:
+This example shows how cores can communicate using the VirtIOBus device. In this example, core #0 sends a packet to every core in the system with the **ping** string. Each core responds with a packet that contains the message **pong**. This example is configured to use three cores. To launch it, simply execute the following commands in the context of the container presented above:
 ```bash
 python3 ../CloudIt.py -a InterCoreComm
 ```
