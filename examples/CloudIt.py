@@ -93,7 +93,7 @@ def fpc_compile(units, flags, file, output):
 
 def virtiofsd_run(directory):
     try:
-        child = subprocess.Popen([virtiofsd, "--shared-dir", directory, "--socket-path", "/tmp/vhostqemu1"])
+        child = subprocess.Popen([virtiofsd, "--sandbox", "none", "--shared-dir", directory, "--socket-path", "/tmp/vhostqemu1"])
     except OSError as error:
         print("Error running virtiofsd ", ", args: ",
                args, ", error: ", error)
